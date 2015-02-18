@@ -35,7 +35,6 @@ function node_reference_preview_form_alter(&$form, &$form_state, $form_id) {
 				));
 			$form['node_reference_preview_wrapper']['#markup'] = render($output);
 			// $form['node_reference_preview_wrapper']['#markup'] = t('Here comes node number: @nid', array('@nid' => $nid));
-			dpm($form_state);
 		}
 	}
 }
