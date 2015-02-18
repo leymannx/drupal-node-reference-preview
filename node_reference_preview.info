@@ -1,0 +1,5 @@
+name = Node Reference Preview
+description = Previewing a selected node
+core = 7.x
+package = Custom
+dependencies[] = node_reference

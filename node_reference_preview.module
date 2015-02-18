@@ -1,0 +1,45 @@
+<?php
+/**
+ * @file
+ * Node form alterations to preview a selected node from node_reference select list
+ */
+
+/**
+ * Implements hook_form_alter().
+ */
+function node_reference_preview_form_alter(&$form, &$form_state, $form_id) {
+
+	if ($form_id == 'product_line_node_form') {
+
+		// ['field_product_image'] is a container, so go one level deeper --> [LANGUAGE_NONE]
+		$form['field_product_image'][LANGUAGE_NONE]['#ajax']['callback'] = '_node_reference_preview_ajax_callback';
+		$form['field_product_image'][LANGUAGE_NONE]['#ajax']['wrapper'] = 'node-reference-preview';
+
+		$form['node_reference_preview_wrapper'] = array(
+			'#type' => 'markup',
+			'#prefix' => '<div id="node-reference-preview">',
+			'#suffix' => '</div>',
+			'#weight' => 3,
+			);
+
+		if (isset($form_state['values']['field_product_image'][LANGUAGE_NONE][0]['nid']) && $form_state['values']['field_product_image'][LANGUAGE_NONE][0]['nid'] != '') {
+			$nid = $form_state['values']['field_product_image'][LANGUAGE_NONE][0]['nid'];
+			$node = node_load($nid);
+			$image = field_get_items('node', $node, 'field_image');
+			$output = field_view_value('node', $node, 'field_image', $image[0], array(
+				'type' => 'image',
+				'settings' => array(
+					'image_style' => 'thumbnail',
+					// 'image_link' => 'content',
+					),
+				));
+			$form['node_reference_preview_wrapper']['#markup'] = render($output);
+			// $form['node_reference_preview_wrapper']['#markup'] = t('Here comes node number: @nid', array('@nid' => $nid));
+			dpm($form_state);
+		}
+	}
+}
+
+function _node_reference_preview_ajax_callback(&$form, &$form_state) {
+	return $form['node_reference_preview_wrapper'];
+}
